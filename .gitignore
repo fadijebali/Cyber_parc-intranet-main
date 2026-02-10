@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Builds
+/dist/
+/build/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Downloads
+*.crdownload
