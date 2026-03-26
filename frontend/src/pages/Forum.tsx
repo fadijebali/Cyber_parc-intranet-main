@@ -81,6 +81,8 @@ export default function Forum() {
   const [commentsError, setCommentsError] = useState<Record<number, string>>({});
   const [companies, setCompanies] = useState<Company[]>([]);
   const [adminCompanyId, setAdminCompanyId] = useState<number | null>(null);
+  const [newCommentContent, setNewCommentContent] = useState('');
+  const [isCommentSending, setIsCommentSending] = useState(false);
 
   const isAdmin = user?.role === 'admin';
   const userCompanyId = typeof user?.companyId === 'number' ? user.companyId : Number(user?.companyId);
@@ -203,6 +205,10 @@ export default function Forum() {
     };
   }, [isAdmin, adminCompanyId]);
 
+  useEffect(() => {
+    setNewCommentContent('');
+  }, [activePostId]);
+
   const loadComments = async (postId: number) => {
     try {
       setCommentsLoading((prev) => ({ ...prev, [postId]: true }));
@@ -227,6 +233,44 @@ export default function Forum() {
     setActivePostId(postId);
     if (!commentsByPost[postId]) {
       loadComments(postId);
+    }
+  };
+
+  const handleNewComment = async () => {
+    if (!activePost || !newCommentContent.trim()) return;
+    if (!effectiveCompanyId) {
+      toast({
+        title: 'Commentaire impossible',
+        description: isAdmin ? 'Choisissez une entreprise pour commenter.' : 'Votre compte doit être lié à une entreprise pour commenter.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setIsCommentSending(true);
+      await apiFetch(`/api/forum/posts/${activePost.id}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({
+          content: newCommentContent,
+          companyId: effectiveCompanyId,
+          userId: user.id,
+        }),
+      });
+
+      setNewCommentContent('');
+      await loadComments(activePost.id);
+      await loadPosts();
+    } catch (error) {
+      console.error('Failed to create comment', error);
+      const message = error instanceof Error ? error.message : 'Erreur lors de la publication.';
+      toast({
+        title: 'Erreur de publication',
+        description: message || 'Erreur lors de la publication.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsCommentSending(false);
     }
   };
 
@@ -334,10 +378,7 @@ export default function Forum() {
               </SelectContent>
             </Select>
           )}
-          <Button variant="outline" className="gap-2">
-            <Filter className="w-4 h-4" />
-            Filtres
-          </Button>
+
           <Dialog open={isNewPostOpen} onOpenChange={setIsNewPostOpen}>
             <DialogTrigger asChild>
               <Button className="gap-2 bg-accent hover:bg-accent/90 text-accent-foreground">
@@ -387,7 +428,7 @@ export default function Forum() {
                   <Button 
                     onClick={handleNewPost}
                     className="bg-accent hover:bg-accent/90 text-accent-foreground"
-                    disabled={!newPostTitle.trim() || !newPostContent.trim() || !user?.companyId}
+                    disabled={!newPostTitle.trim() || !newPostContent.trim() || !user?.id || !effectiveCompanyId}
                   >
                     Publier
                   </Button>
@@ -564,6 +605,35 @@ export default function Forum() {
                     ) : (
                       <div className="text-sm text-muted-foreground">Aucun commentaire pour le moment.</div>
                     ))}
+                </div>
+
+                <div className="border-t border-border px-6 py-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="comment-input">Votre message</Label>
+                    <Textarea
+                      id="comment-input"
+                      placeholder="Partager votre reponse avec tous les utilisateurs..."
+                      value={newCommentContent}
+                      onChange={(e) => setNewCommentContent(e.target.value)}
+                      className="min-h-[120px]"
+                    />
+                  </div>
+                  <div className="flex justify-end gap-2 mt-3">
+                    <Button
+                      variant="outline"
+                      onClick={() => setNewCommentContent('')}
+                      disabled={!newCommentContent.trim() || isCommentSending}
+                    >
+                      Effacer
+                    </Button>
+                    <Button
+                      onClick={handleNewComment}
+                      className="bg-accent hover:bg-accent/90 text-accent-foreground"
+                      disabled={!newCommentContent.trim() || !user?.id || !effectiveCompanyId || isCommentSending}
+                    >
+                      {isCommentSending ? 'Envoi...' : 'Envoyer'}
+                    </Button>
+                  </div>
                 </div>
 
               </div>

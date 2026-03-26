@@ -257,6 +257,26 @@ export default function Directory() {
                       <Mail className="w-4 h-4 shrink-0" />
                       <span className="truncate">{company.email}</span>
                     </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Phone className="w-4 h-4 shrink-0" />
+                      <span className="truncate">{company.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Globe className="w-4 h-4 shrink-0" />
+                      {company.website !== '—' ? (
+                        <a
+                          href={company.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="truncate hover:underline"
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {company.website}
+                        </a>
+                      ) : (
+                        <span className="truncate">{company.website}</span>
+                      )}
+                    </div>
                   </div>
                 </div>
 

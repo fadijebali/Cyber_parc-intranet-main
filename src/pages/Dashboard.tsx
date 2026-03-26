@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/context/AuthContext';
 import { apiFetch } from '@/lib/api';
 import { cn } from '@/lib/utils';
@@ -67,9 +68,17 @@ const activityFeed = [
   { id: 4, company: 'FinanceAI', action: 'recherche des partenaires', time: 'Il y a 4h' },
 ];
 
+const postCategories = [
+  { id: 'announcements', label: 'Annonce' },
+  { id: 'opportunities', label: 'Opportunité' },
+  { id: 'events', label: 'Événement' },
+  { id: 'questions', label: 'Question' },
+];
+
 export default function Dashboard() {
   const { user } = useAuth();
   const [newPost, setNewPost] = useState('');
+  const [newPostCategory, setNewPostCategory] = useState('announcements');
   const [posts, setPosts] = useState(forumPosts);
   const [dashboardStats, setDashboardStats] = useState(stats);
   const [dashboardActivity, setDashboardActivity] = useState(activityFeed);
@@ -159,7 +168,7 @@ export default function Dashboard() {
         body: JSON.stringify({
           title: newPost.slice(0, 80),
           content: newPost,
-          category: 'announcements',
+          category: newPostCategory,
           companyId: user.companyId,
           userId: user.id,
         }),
@@ -223,6 +232,20 @@ export default function Dashboard() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <Select value={newPostCategory} onValueChange={setNewPostCategory}>
+                      <SelectTrigger className="w-[220px]">
+                        <SelectValue placeholder="Type de publication" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {postCategories.map((category) => (
+                          <SelectItem key={category.id} value={category.id}>
+                            {category.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                   <Textarea
                     placeholder="Partagez quelque chose avec la communauté..."
                     value={newPost}

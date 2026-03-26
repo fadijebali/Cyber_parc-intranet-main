@@ -1132,6 +1132,7 @@ app.post('/api/forum/posts/:id/comments', async (req, res) => {
     const commentColumns = await getTableColumns('Comment')
     const postIdColumn = resolveColumn(commentColumns, ['postId', 'post_id'])
     const createdAtColumn = resolveColumn(commentColumns, ['createdAt', 'created_at'])
+    const updatedAtColumn = resolveColumn(commentColumns, ['updatedAt', 'updated_at'])
     const companyIdColumn = resolveColumn(commentColumns, ['companyId', 'company_id'])
     const userIdColumn = resolveColumn(commentColumns, ['userId', 'user_id'])
     const authorIdColumn = resolveColumn(commentColumns, ['authorId', 'author_id'])

@@ -185,19 +185,13 @@ export default function Auth() {
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Pas encore de compte?{' '}
-                  <a href="#" className="text-accent hover:underline font-medium">
-                    Demander un accès
-                  </a>
-                </p>
-              </div>
+             
 
               {/* Demo hint */}
               <div className="mt-6 p-3 rounded-lg bg-muted/50 border border-border/50">
                 <p className="text-xs text-muted-foreground text-center">
-                  <strong>Démo:</strong> Entrez n'importe quel email/mot de passe et sélectionnez votre rôle
+                  <strong>Démo:</strong> c'est il ya un error acceder au admin;
+                  
                 </p>
               </div>
             </CardContent>

@@ -36,11 +36,13 @@ export default function Settings() {
   const [profile, setProfile] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    phone: '+212 5XX XX XX XX',
-    company: user?.companyName || 'Mon Entreprise',
-    description: 'Description de l\'entreprise...',
-    website: 'www.monentreprise.ma',
-    location: 'Cyber Parc, Bâtiment A',
+    phone: '',
+    company: user?.companyName || '',
+    description: '',
+    website: '',
+    location: '',
+    companyEmail: '',
+    companyPhone: '',
   });
 
   const [notifications, setNotifications] = useState({
@@ -87,6 +89,8 @@ export default function Settings() {
           description: data.company?.description || prev.description,
           website: data.company?.website || prev.website,
           location: data.company?.location || prev.location,
+          companyEmail: data.company?.email || prev.companyEmail,
+          companyPhone: data.company?.phone || prev.companyPhone,
         }));
       } catch (error) {
         console.error('Failed to load profile', error);
@@ -141,6 +145,8 @@ export default function Settings() {
             description: profile.description,
             website: profile.website,
             location: profile.location,
+            email: profile.companyEmail,
+            phone: profile.companyPhone,
           },
         }),
       });
@@ -329,6 +335,31 @@ export default function Settings() {
                       />
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyEmail">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="companyEmail"
+                        type="email"
+                        value={profile.companyEmail}
+                        onChange={(e) => setProfile({ ...profile, companyEmail: e.target.value })}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="companyPhone">Téléphone</Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="companyPhone"
+                        value={profile.companyPhone}
+                        onChange={(e) => setProfile({ ...profile, companyPhone: e.target.value })}
+                        className="pl-10"
+                      />
+                    </div>
+                  </div>
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="location">Localisation</Label>
                     <div className="relative">
@@ -445,7 +476,7 @@ export default function Settings() {
           </motion.div>
         </TabsContent>
 
-        {/* Appearance Tab */}
+        {/* Appearance Tab sombre et claire */}
         <TabsContent value="appearance">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
